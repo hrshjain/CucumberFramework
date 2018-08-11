@@ -5,6 +5,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,11 +19,17 @@ import cucumber.api.java.en.When;
 
 public class LoginTest {
 
-	public static WebDriver driver;
+	static WebDriver driver;
+	static WebElement username;
+	static WebElement password;
+	static WebElement pin;
+	ConfigFileReader configFileReader;
+	
 	@Given("^User starts the browser$")
 	public void user_starts_the_browser() throws Throwable {
 	    // Write code here that turns the phrase above into concrete actions
-		System.setProperty("webdriver.gecko.driver","/Users/hjain/code/geckodriver");
+		configFileReader= new ConfigFileReader();
+		System.setProperty("webdriver.gecko.driver",configFileReader.getDriverPath());
 		driver = new FirefoxDriver();
 		//comment the above 2 lines and uncomment below 2 lines to use Chrome
 		//System.setProperty("webdriver.chrome.driver","G:\\chromedriver.exe");
@@ -32,7 +39,7 @@ public class LoginTest {
 	@When("^User Navigate to Login Page$")
 	public void user_Navigate_to_Login_Page() throws Throwable {
 	    // Write code here that turns the phrase above into concrete actions
-		String baseUrl = "https://localhost:8442/oscar";
+		String baseUrl = configFileReader.getApplicationUrl();
         String expectedTitle = "Juno EMR Services Client Login";
         String actualTitle = "";
 
@@ -49,24 +56,22 @@ public class LoginTest {
         }
         
 	}
-    @When("^User enters \"(.*)\" and \"(.*)\" and \"(.*)\"$")
-	public void user_enters_Username_Password_and_Pin(String username, String password, String pin) 
+	
+	@When("^User enters username password and pin$")
+	public void user_enters_Username_Password_and_Pin() 
 			throws Throwable {
 	    // Write code here that turns the phrase above into concrete actions
         //Get web element for username, password and pin
-        WebElement oscarusername = driver.findElement(By.name("username"));
-        WebElement oscarpassword = driver.findElement(By.name("password"));
-        WebElement oscarpin = driver.findElement(By.name("pin"));
-        
+    	PageFactory.initElements(driver, LoginTest.class);
         //Enter values for the web element
-        oscarusername.sendKeys(username);
-        oscarpassword.sendKeys(password);
-        oscarpin.sendKeys(pin);
+        username.sendKeys(configFileReader.getOscarUsername());
+        password.sendKeys(configFileReader.getOscarPassword());
+        pin.sendKeys(configFileReader.getOscarPin());
         
         //Click on login button
 //        WebElement submit = driver.findElement(By.name("commit"));
 //        submit.click();
-        oscarpin.sendKeys(Keys.RETURN);
+        pin.sendKeys(Keys.RETURN);
 	}
 
 	@Then("^User can now view the HomePage$")
@@ -83,6 +88,7 @@ public class LoginTest {
             System.out.println("Test Failed");
         
         }
+        
         driver.quit();
 	}
 

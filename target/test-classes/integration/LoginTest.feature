@@ -20,12 +20,8 @@
 Feature: Basic Login functionality
 
   @tag2
-  Scenario Outline: User Logs into OscarEMR (using examples)
+  Scenario: User Logs into OscarEMR (using examples)
     Given User starts the browser
     When User Navigate to Login Page
-    And User enters "<username>" and "<password>" and "<pin>"
+    And User enters username password and pin
     Then User can now view the HomePage
-    
-  Examples:
-    | username | password | pin  |
-    | oscardoc | LEADlab! | 1117 |
